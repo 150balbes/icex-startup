@@ -1,0 +1,2 @@
+copy: *.conf
+tar: icewm name=icewm
