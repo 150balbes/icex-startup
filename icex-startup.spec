@@ -1,6 +1,6 @@
 Name: icex-startup
 Version: 0.16
-Release: alt6
+Release: alt7
 
 Summary: simple pluggable IceWM autostart manager
 
@@ -19,12 +19,13 @@ AutoReq: no
 
 # uncomment if you want to backport prior to M30
 #define icewmconfdir #_x11x11dir/icewm
-%define icewmconfdir %_sysconfdir/icewm
+#%define icewmconfdir %_sysconfdir/icewm
+%define icewmconfdir %_datadir/icewm
 #due to new icewmconfdir in /etc/X11
 #Requires: icewm >= 1.3.11
 ##Requires: icewm-x-githubmod
 
-Conflicts: icewm-startup
+Conflicts: icewm-startup icewm-x-startup
 
 %description
 Simple pluggable icewm autostart manager is a generic IceWM startup script
@@ -246,16 +247,15 @@ done
 EOF
 
 %install
-%__mkdir_p %buildroot/%icewmconfdir/startup_d
-%__mkdir_p %buildroot/%icewmconfdir/shutdown_d
-%__mkdir_p %buildroot/%icewmconfdir/reboot_d
-%__mkdir_p %buildroot/%icewmconfdir/restart_d
-%__mkdir_p %buildroot/%icewmconfdir/logout_d
+%__mkdir_p %buildroot%icewmconfdir/startup_d
+%__mkdir_p %buildroot%icewmconfdir/shutdown_d
+%__mkdir_p %buildroot%icewmconfdir/reboot_d
+%__mkdir_p %buildroot%icewmconfdir/restart_d
+%__mkdir_p %buildroot%icewmconfdir/logout_d
 
-mkdir -p %buildroot%_datadir/icewm
 tar xf %SOURCE0 -C %buildroot%_datadir/
 
-cat <<'EOF' > %buildroot/%icewmconfdir/startup_d/001-delay
+cat <<'EOF' > %buildroot%icewmconfdir/startup_d/001-delay
 #!/bin/sh
 # delay before starting programs, to eliminate possible artifacts
 # name index 010- to save ability to run programs before this
@@ -269,7 +269,7 @@ tmem=`free -m | awk '/Mem/{print $2}'`
 sleep $delay
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/startup_d/002-update-menus
+cat <<EOF > %buildroot%icewmconfdir/startup_d/002-update-menus
 #!/bin/sh
 # if user has no local menu we will not create it either.
 # otherwise it is worth updating it.
@@ -278,79 +278,79 @@ if [ -e ~/.icewm/menu ]; then
 fi
 EOF
 
-echo 'xtoolwait gkrellm'> %buildroot/%icewmconfdir/startup_d/010-gkrellm
+echo 'xtoolwait gkrellm'> %buildroot%icewmconfdir/startup_d/010-gkrellm
 
-echo 'ivman&'> %buildroot/%icewmconfdir/startup_d/020-ivman
+echo 'ivman&'> %buildroot%icewmconfdir/startup_d/020-ivman
 
-cat <<EOF > %buildroot/%icewmconfdir/startup_d/030-idesk
+cat <<EOF > %buildroot%icewmconfdir/startup_d/030-idesk
 #!/bin/sh
 startidesk &
 EOF
 
-echo "xscreensaver -no-splash &" > %buildroot/%icewmconfdir/startup_d/040-xscreensaver
+echo "xscreensaver -no-splash &" > %buildroot%icewmconfdir/startup_d/040-xscreensaver
 
-cat <<EOF > %buildroot/%icewmconfdir/startup_d/090-simple-sound
+cat <<EOF > %buildroot%icewmconfdir/startup_d/090-simple-sound
 #!/bin/sh
 
-if [ -e ~/.icewm/sounds/startup.wav ]; then
-	aplay ~/.icewm/sounds/startup.wav 2&> /dev/null&
+if [ -e ~/.icewm/sounds/default/startup.wav ]; then
+	aplay ~/.icewm/sounds/default/startup.wav 2&> /dev/null&
 else
-    if [ -e /usr/share/icewm/sounds/startup.wav ]; then
-	aplay /usr/share/icewm/sounds/startup.wav 2&> /dev/null&
+    if [ -e /usr/share/icewm/sounds/default/startup.wav ]; then
+	aplay /usr/share/icewm/sounds/default/startup.wav 2&> /dev/null&
     fi
 fi
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/shutdown_d/090-simple-sound
+cat <<EOF > %buildroot%icewmconfdir/shutdown_d/090-simple-sound
 #!/bin/sh
 
-if [ -e ~/.icewm/sounds/shutdown.wav ]; then
-	aplay ~/.icewm/sounds/shutdown.wav 2&> /dev/null&
+if [ -e ~/.icewm/sounds/default/shutdown.wav ]; then
+	aplay ~/.icewm/sounds/default/shutdown.wav 2&> /dev/null&
 else
-    if [ -e /usr/share/icewm/sounds/shutdown.wav ]; then
-	aplay /usr/share/icewm/sounds/shutdown.wav 2&> /dev/null&
+    if [ -e /usr/share/icewm/sounds/default/shutdown.wav ]; then
+	aplay /usr/share/icewm/sounds/default/shutdown.wav 2&> /dev/null&
     fi
 fi
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/restart_d/090-simple-sound
+cat <<EOF > %buildroot%icewmconfdir/restart_d/090-simple-sound
 #!/bin/sh
 
-if [ -e ~/.icewm/sounds/restart.wav ]; then
-	aplay ~/.icewm/sounds/restart.wav 2&> /dev/null&
+if [ -e ~/.icewm/sounds/default/restart.wav ]; then
+	aplay ~/.icewm/sounds/default/restart.wav 2&> /dev/null&
 else
-    if [ -e /usr/share/icewm/sounds/restart.wav ]; then
-	aplay /usr/share/icewm/sounds/restart.wav 2&> /dev/null&
+    if [ -e /usr/share/icewm/sounds/default/restart.wav ]; then
+	aplay /usr/share/icewm/sounds/default/restart.wav 2&> /dev/null&
     fi
 fi
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/reboot_d/090-simple-sound
+cat <<EOF > %buildroot%icewmconfdir/reboot_d/090-simple-sound
 #!/bin/sh
 
-if [ -e ~/.icewm/sounds/restart.wav ]; then
-	aplay ~/.icewm/sounds/restart.wav 2&> /dev/null&
+if [ -e ~/.icewm/sounds/default/restart.wav ]; then
+	aplay ~/.icewm/sounds/default/restart.wav 2&> /dev/null&
 else
-    if [ -e /usr/share/icewm/sounds/restart.wav ]; then
-	aplay /usr/share/icewm/sounds/restart.wav 2&> /dev/null&
+    if [ -e /usr/share/icewm/sounds/default/restart.wav ]; then
+	aplay /usr/share/icewm/sounds/default/restart.wav 2&> /dev/null&
     fi
 fi
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/logout_d/090-simple-sound
+cat <<EOF > %buildroot%icewmconfdir/logout_d/090-simple-sound
 #!/bin/sh
 
-if [ -e ~/.icewm/sounds/shutdown.wav ]; then
-	aplay ~/.icewm/sounds/shutdown.wav 2&> /dev/null&
+if [ -e ~/.icewm/sounds/default/shutdown.wav ]; then
+	aplay ~/.icewm/sounds/default/shutdown.wav 2&> /dev/null&
 else
-    if [ -e /usr/share/icewm/sounds/shutdown.wav ]; then
-	aplay /usr/share/icewm/sounds/shutdown.wav 2&> /dev/null&
+    if [ -e /usr/share/icewm/sounds/default/shutdown.wav ]; then
+	aplay /usr/share/icewm/sounds/default/shutdown.wav 2&> /dev/null&
     fi
 fi
 EOF
 
-install -pD -m 644 %SOURCE1 %buildroot/%icewmconfdir/XXkb.conf
-cat <<EOF > %buildroot/%icewmconfdir/startup_d/100-xxkb
+install -pD -m 644 %SOURCE1 %buildroot%_datadir/xxkb/XXkb.conf
+cat <<EOF > %buildroot%icewmconfdir/startup_d/100-xxkb
 #!/bin/sh
 # it is not wise to run non-configured xxkb, so we look 
 # whether it is configured.
@@ -364,23 +364,23 @@ if [ -e ~/.xxkbrc ] || [ -e /etc/X11/app-defaults/XXkb ]; then
 fi
 EOF
 
-cp %buildroot/%icewmconfdir/startup_d/100-xxkb %buildroot/%icewmconfdir/startup_d/100-xxkb-tray
+cp %buildroot%icewmconfdir/startup_d/100-xxkb %buildroot%icewmconfdir/startup_d/100-xxkb-tray
 
-cat <<EOF > %buildroot/%icewmconfdir/startup_d/110-tray_mixer_plus
+cat <<EOF > %buildroot%icewmconfdir/startup_d/110-tray_mixer_plus
 #!/bin/sh
 
 sleep 1
 tray_mixer_plus&
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/startup_d/120-mount-tray
+cat <<EOF > %buildroot%icewmconfdir/startup_d/120-mount-tray
 #!/bin/sh
 
 sleep 1
 mount-tray&
 EOF
 
-cat <<EOF > %buildroot/%icewmconfdir/startup_d/140-networkmanager
+cat <<EOF > %buildroot%icewmconfdir/startup_d/140-networkmanager
 #!/bin/sh
 
 sleep 1
@@ -388,17 +388,17 @@ sleep 1
 /usr/bin/nm-applet&
 EOF
 
-chmod 755 %buildroot/%icewmconfdir/startup_d/*
-chmod 755 %buildroot/%icewmconfdir/shutdown_d/*
-chmod 755 %buildroot/%icewmconfdir/reboot_d/*
-chmod 755 %buildroot/%icewmconfdir/restart_d/*
-chmod 755 %buildroot/%icewmconfdir/logout_d/*
+chmod 755 %buildroot%icewmconfdir/startup_d/*
+chmod 755 %buildroot%icewmconfdir/shutdown_d/*
+chmod 755 %buildroot%icewmconfdir/reboot_d/*
+chmod 755 %buildroot%icewmconfdir/restart_d/*
+chmod 755 %buildroot%icewmconfdir/logout_d/*
 
 %post xxkb-tray
 if [ $1 -eq 1 ]; then
-    if [ -e /etc/X11/app-defaults/XXkb ]; then
-	cp -fp /etc/X11/app-defaults/XXkb %icewmconfdir/XXkb~
-	cp -fp %icewmconfdir/XXkb.conf /etc/X11/app-defaults/XXkb
+    if [ -e %_x11appconfdir/XXkb ]; then
+	cp -fp %_x11appconfdir/XXkb %_datadir/xxkb/XXkb~
+	cp -fp %_datadir/xxkb/XXkb.conf %_x11appconfdir/XXkb
     fi
 fi
 
@@ -409,10 +409,10 @@ fi
 
 %preun xxkb-tray
 if [ $1 -eq 0 ]; then
-    if [ -e %icewmconfdir/XXkb~ ]; then
-	mv -f %icewmconfdir/XXkb~ /etc/X11/app-defaults/XXkb
+    if [ -e %_datadir/xxkb/XXkb~ ]; then
+	mv -f %_datadir/xxkb/XXkb~ %_x11appconfdir/XXkb
     else
-	rm -f /etc/X11/app-defaults/XXkb
+	rm -f %_x11appconfdir/XXkb
     fi
 fi
 
@@ -455,15 +455,15 @@ fi
 %config %icewmconfdir/reboot_d/090-simple-sound
 %config %icewmconfdir/restart_d/090-simple-sound
 %config %icewmconfdir/logout_d/090-simple-sound
-%dir %_datadir/icewm/sounds
-%_datadir/icewm/sounds
+%dir %icewmconfdir/sounds
+%icewmconfdir/sounds
 
 %files xxkb
 %config %icewmconfdir/startup_d/100-xxkb
 
 %files xxkb-tray
 %config %icewmconfdir/startup_d/100-xxkb-tray
-%icewmconfdir/XXkb.conf
+%_datadir/xxkb/XXkb.conf
 
 %files tray_mixer_plus
 %config %icewmconfdir/startup_d/110-tray_mixer_plus
@@ -477,6 +477,12 @@ fi
 %files grun
 
 %changelog
+* Sat Dec 23 2015 Oleg Ivanov <Leo-sp150@yandex.ru> 0.16-alt7
+- new version
+
+* Sat Dec 20 2015 Oleg Ivanov <Leo-sp150@yandex.ru> 0.16-alt6.1
+- add conflicts
+
 * Sat Dec 14 2015 Oleg Ivanov <Leo-sp150@yandex.ru> 0.16-alt6
 - new version
 
