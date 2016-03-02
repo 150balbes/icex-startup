@@ -1,6 +1,6 @@
 Name: icex-startup
 Version: 0.16
-Release: alt7
+Release: alt8
 
 Summary: simple pluggable IceWM autostart manager
 
@@ -284,7 +284,7 @@ echo 'ivman&'> %buildroot%icewmconfdir/startup_d/020-ivman
 
 cat <<EOF > %buildroot%icewmconfdir/startup_d/030-idesk
 #!/bin/sh
-startidesk &
+idesk &
 EOF
 
 echo "xscreensaver -no-splash &" > %buildroot%icewmconfdir/startup_d/040-xscreensaver
@@ -477,6 +477,9 @@ fi
 %files grun
 
 %changelog
+* Sat Mar 01 2016 Oleg Ivanov <Leo-sp150@yandex.ru> 0.16-alt8
+- edit idesk
+
 * Sat Dec 23 2015 Oleg Ivanov <Leo-sp150@yandex.ru> 0.16-alt7
 - new version
 
